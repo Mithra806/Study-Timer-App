@@ -1,0 +1,67 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'MedievalGothic';
+body{
+    min-height: 100vh;
+    background-image: url("https://i.pinimg.com/1200x/04/eb/39/04eb39a4171965292d1c2ab670b67830.jpg");
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.container{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    color: rgb(255, 255, 255);
+    background-color: rgba(53, 90, 170, 0.5);
+    border-radius: 10px;
+    padding: 40px 30px;
+
+}
+.title{
+    font-size: 30px;
+}
+hr{
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+    height: 5px;
+    border-radius: 10px;
+    border:none;
+}
+.timer{
+    font-size: 100px;
+    font-weight: 700;
+}
+.button-wrapper{
+    display: flex;
+    gap: 10px;
+}
+button{
+    font-size:20px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 5px 15px;
+    border-radius: 5px;
+    border: none;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+button:hover{
+    transform: translateY(-10px);
+}
+#start{
+    background-color: #78866b;
+}
+#stop{
+    background-color: #c97f7f;
+}
+#reset{
+    background-color: #354c7c;
+}
+}
