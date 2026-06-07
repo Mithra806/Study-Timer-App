@@ -3,6 +3,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'MedievalGothic';
+}
 body{
     min-height: 100vh;
     background-image: url("https://i.pinimg.com/1200x/04/eb/39/04eb39a4171965292d1c2ab670b67830.jpg");
@@ -63,5 +64,4 @@ button:hover{
 }
 #reset{
     background-color: #354c7c;
-}
 }
