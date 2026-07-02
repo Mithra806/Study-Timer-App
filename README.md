@@ -3,4 +3,4 @@
 
 # Study Timer App
 Simple "aesthatic" study timer app using pomodoro timer method.
-(https://6a25f869ba8dd52b00b2e62e--glistening-rabanadas-041da2.netlify.app/)
+(https://study-timer-app-psi.vercel.app/)
