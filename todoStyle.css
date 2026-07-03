@@ -1,132 +1,241 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Poppins:wght@300;400;500;600&display=swap');
+
+:root{
+    --cream: #FAF3E9;
+    --paper: #FFFDF9;
+    --terracotta: #C97C5D;
+    --terracotta-soft: #E8C4B0;
+    --sage: #9CAF88;
+    --sage-soft: #D9E4CC;
+    --clay: #B5654A;
+    --ink: #4A3F35;
+    --ink-soft: #8A7B6C;
+    --line: #E9DFD3;
+}
+
 *{
     margin: 0;
-    padding:0;
+    padding: 0;
     font-family: 'Poppins', sans-serif;
     box-sizing: border-box;
 }
 
-.container{
-    width: 100%;
-    min-height:100vh;
-    background: linear-gradient(135deg, #FFDFB9, #A4193D );
-    padding: 10px;
+body{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--ink);
 }
 
+.container{
+    width: 100%;
+    min-height: 100vh;
+    background: var(--cream);
+    background-image:
+        radial-gradient(circle at 15% 20%, rgba(201, 124, 93, 0.08), transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(156, 175, 136, 0.10), transparent 40%);
+    padding: 40px 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---------- Nav ---------- */
+nav{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 32px;
+}
+
+nav a {
+  font-family: 'Poppins', sans-serif;
+  color: var(--ink-soft);
+  background-color: var(--paper);
+  border: 1px solid var(--line);
+  padding: 9px 22px;
+  text-decoration: none;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  transition: 0.25s ease;
+  border-radius: 30px;
+}
+
+nav a:hover {
+  background-color: var(--terracotta);
+  border-color: var(--terracotta);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ---------- Card ---------- */
 .todo-app{
     width: 100%;
     max-width: 540px;
-    background: #fff;
-    margin: 100px auto 20px;
-    padding: 40px 30px 70px;
-    border-radius: 10px;
+    background: var(--paper);
+    margin: 0 auto;
+    padding: 44px 36px 60px;
+    border-radius: 22px;
+    border: 1px solid var(--line);
+    box-shadow: 0 20px 50px -20px rgba(74, 63, 53, 0.15);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
+
+.todo-app:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 25px 55px -20px rgba(74, 63, 53, 0.2);
+}
+
 .todo-app h2{
-    color: #002765;
-    display:flex;
-    align-items:center;
-    margin-bottom:20px;
+    font-family: 'DM Serif Display', serif;
+    font-weight: 400;
+    font-size: 28px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.3px;
+    margin-bottom: 28px;
 }
 
 .todo-app h2 img{
-    width: 30px;
-    margin-left:10px;
+    width: 26px;
+    margin-left: 12px;
+    opacity: 0.75;
 }
+
+/* ---------- Input row ---------- */
 .row{
     display: flex;
-    align-items:center;
-    justify-content:space-between;
-    background: #edeef0;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--cream);
+    border: 1px solid var(--line);
     border-radius: 30px;
-    padding-left: 20px;
-    margin-bottom:25px;
+    padding-left: 22px;
+    margin-bottom: 30px;
 }
 
 input{
-    flex:1;
+    flex: 1;
     border: none;
     outline: none;
     background: transparent;
-    padding: 10px;
-    font-size:14px;
+    padding: 12px;
+    font-size: 14px;
+    color: var(--ink);
+    font-family: 'Poppins', sans-serif;
+}
+
+input::placeholder{
+    color: var(--ink-soft);
 }
 
 button{
     border: none;
     outline: none;
-    padding: 16px 50px;
-    background: #ff5945;
+    padding: 15px 42px;
+    background: var(--terracotta);
     color: #fff;
-    font-size: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
     cursor: pointer;
-    border-radius:40px;
+    border-radius: 30px;
+    transition: 0.25s ease;
 }
 
+button:hover{
+    background: var(--clay);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -8px rgba(201, 124, 93, 0.5);
+}
+
+/* ---------- List ---------- */
 ul li{
     list-style: none;
-    font-size:17px;
-    padding: 12px 8px 12px 50px;
+    font-size: 15px;
+    padding: 14px 8px 14px 46px;
     user-select: none;
     cursor: pointer;
     position: relative;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+    animation: slideIn 0.3s ease;
+}
+
+ul li:last-child{
+    border-bottom: none;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 ul li::before{
     content: '';
     position: absolute;
-    height: 28px;
-    width: 28px;
+    height: 22px;
+    width: 22px;
     border-radius: 50%;
-    background-image: url(unchecked.png);
-    background-size: cover;
-    background-position: center;
-    top: 12px;
+    border: 1.5px solid var(--sage);
+    top: 15px;
     left: 8px;
+    transition: 0.2s ease;
 }
 
 ul li.checked{
-    color:#555;
+    color: var(--ink-soft);
     text-decoration: line-through;
 }
-ul li.checked::before{
-    background-image:url(checked.png);
 
+ul li.checked::before{
+    background: var(--sage);
+    border-color: var(--sage);
 }
+
+ul li.checked::after{
+    content: '✓';
+    position: absolute;
+    top: 14px;
+    left: 12.5px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+}
+
 ul li span{
     position: absolute;
-    right:0;
-    top:5px;
-    width: 40px;
-    height: 40px;
-    font-size: 22px;
-    color: #555;
-    line-height: 40px;
+    right: 4px;
+    top: 8px;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    color: var(--ink-soft);
+    line-height: 32px;
     text-align: center;
-    border-radius:50%;
+    border-radius: 50%;
+    transition: 0.2s ease;
 }
 
 ul li span:hover{
-    background: #1e4ba5;
+    background: var(--terracotta-soft);
+    color: var(--clay);
 }
 
-nav {
-  margin-bottom: 19px;
-}
-
-nav a {
-  color: rgb(255, 255, 255);
-  background-color: rgba(53, 90, 170, 0.5);
-  padding: 8px 24px;
-  margin: 10px;
-  text-decoration: none;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  font-size: 16px;
-  display: inline-block;
-  transition: 0.3s;
-  border-radius: 5px;
-}
-nav a:hover {
-  background-color: #9CAF88;
-  color: #F0EFE2;
-  transform: scale(1.05);
+.todo-empty{
+    text-align: center;
+    color: var(--ink-soft);
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 16px;
+    padding: 36px 0 10px;
 }

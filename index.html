@@ -12,8 +12,10 @@
         <a href="#" id="calendar-link">Calendar</a>
     </nav>
     <div class="container">
-        <h1>Study Timer App</h1>
+        <audio id="bell" src="bell.mp3"></audio>
+        <h1>Pomodoro Timer</h1>
         <hr>
+        <p id="mode">Study Time 📚</p>
 
         <p class="timer" id="timer">25:00</p>
 
@@ -22,61 +24,99 @@
             <button id="stop">Pause</button>
             <button id="reset">Reset</button>
         </div>
+        <div class="progress-container">
+        <div id="progress-bar"></div>
+</div>
     </div>
 
     <script src="app.js"></script>
-    <script>
-        const start = document.getElementById("start");
-        const stop = document.getElementById("stop");
-        const reset = document.getElementById("reset");
-        const timer = document.getElementById("timer");
+<script>
+const mode = document.getElementById("mode");
+const start = document.getElementById("start");
+const stop = document.getElementById("stop");
+const reset = document.getElementById("reset");
+const timer = document.getElementById("timer");
+const progressBar = document.getElementById("progress-bar");
+const bell = document.getElementById("bell");
 
-        let timeLeft = 1500;
-        let timerInterval;
+const WORK_TIME = 25 * 60;
+const BREAK_TIME = 5 * 60;
 
-        const updateTimer = () => {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
+let timeLeft = WORK_TIME;
+let timerInterval = null;
+let isBreak = false;
 
-            timer.innerHTML = `${minutes.toString().padStart(2, "0")}:${seconds
-                .toString()
-                .padStart(2, "0")}`;
-        };
+function updateTimer() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
 
-        const startTimer = () => {
-            if (timerInterval) return; // prevents multiple intervals
+    timer.textContent =
+        `${minutes.toString().padStart(2, "0")}:${seconds
+            .toString()
+            .padStart(2, "0")}`;
 
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimer();
+if (isBreak) {
+    timer.style.color = "#9CAF88"; // sage — matches --sage in your CSS
+} else {
+    timer.style.color = "#B5654A"; // clay — matches --clay in your CSS
+}
+    mode.textContent = isBreak ? "Break Time ☕" : "Study Time 📚";
+    const totalTime = isBreak ? BREAK_TIME : WORK_TIME;
+    const percent = (timeLeft / totalTime) * 100;
 
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    timerInterval = null;
-                    alert("Time's up!");
-                    timeLeft = 1500;
-                    updateTimer();
-                }
-            }, 1000);
-        };
+    progressBar.style.width = percent + "%";
+}
 
-        const stopTimer = () => {
-            clearInterval(timerInterval);
-            timerInterval = null;
-        };
+function switchMode() {
+    if (isBreak) {
+        alert("Break is over! Lock in time!.");
+        bell.play();
+        isBreak = false;
+        timeLeft = WORK_TIME;
 
-        const resetTimer = () => {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            timeLeft = 1500;
-            updateTimer();
-        };
+    } else {
+        alert("Study session complete! Time for a break.");
+        bell.play();
+        isBreak = true;
+        timeLeft = BREAK_TIME;
+    }
 
-        start.addEventListener("click", startTimer);
-        stop.addEventListener("click", stopTimer);
-        reset.addEventListener("click", resetTimer);
+    updateTimer();
+}
 
+function startTimer() {
+    if (timerInterval) return;
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
         updateTimer();
-    </script>
+
+        if (timeLeft <= 0) {
+            switchMode();
+        }
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+}
+
+function resetTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+
+    isBreak = false;
+    timeLeft = WORK_TIME;
+
+    updateTimer();
+}
+
+start.addEventListener("click", startTimer);
+stop.addEventListener("click", stopTimer);
+reset.addEventListener("click", resetTimer);
+
+updateTimer();
+</script>
 </body>
 </html>

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <link rel="stylesheet" href="calendarStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+            <a href="#" id="todo-link">Todo List</a>
+            <a href="#" id="timer-link">Pomodoro Timer</a>
+    </nav>
+    <div class="container">
+
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <div class="nav-buttons">
+                    <button class="nav-btn" id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                    <button class="nav-btn" id="next-month"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="month-year" id="month-year">June 2026</div>
+            </div>
+
+            <div class="weekdays">
+                <div class="weekday">Sun</div>
+                <div class="weekday">Mon</div>
+                <div class="weekday">Tue</div>
+                <div class="weekday">Wed</div>
+                <div class="weekday">Thu</div>
+                <div class="weekday">Fri</div>
+                <div class="weekday">Sat</div>
+            </div>
+
+            <div class="days" id="days"></div>
+
+            <div class="calendar-footer">
+                <button class="today-btn" id="today-btn">
+                    <i class="fas fa-calendar-day"></i>
+                </button>
+
+                <div class="event-indicator">
+                    <i class="fas fa-circle" style="color: var(--accent); font-size: 0.6rem;"></i>
+                    <span>Has events</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="event-panel" id="event-panel">
+            <div class="event-header">
+                <div class="event-date" id="event-date">Select a date</div>
+                <i class="fas fa-calendar-alt event-icon"></i>
+            </div>
+
+            <div class="event-list" id="event-list">
+                <div class="no-events">
+                    Select a date with events to view them here
+                </div>
+            </div>
+
+            <div class="add-event-form">
+                <h3 class="add-event-title">Add an event</h3>
+
+                <input
+                    type="time"
+                    id="event-time-input"
+                    class="event-input"
+                />
+
+                <input
+                    type="text"
+                    id="event-text-input"
+                    class="event-input"
+                    placeholder="Event description"
+                    maxlength="80"
+                />
+
+                <button
+                    type="button"
+                    id="add-event-btn"
+                    class="add-event-btn"
+                >
+                    <i class="fas fa-plus"></i> Add event
+                </button>
+
+                <p class="add-event-hint" id="add-event-hint">
+                    Select a date on the calendar first.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+
+const monthYearEl = document.getElementById('month-year');
+const daysEl = document.getElementById('days');
+const prevMonthBtn = document.getElementById('prev-month');
+const nextMonthBtn = document.getElementById('next-month');
+const todayBtn = document.getElementById('today-btn');
+
+const eventPanel = document.getElementById('event-panel');
+const eventDateEl = document.getElementById('event-date');
+const eventListEl = document.getElementById('event-list');
+
+const addEventBtn = document.getElementById('add-event-btn');
+const eventTimeInput = document.getElementById('event-time-input');
+const eventTextInput = document.getElementById('event-text-input');
+const addEventHint = document.getElementById('add-event-hint');
+
+const STORAGE_KEY = "calendarEvents";
+
+function loadData() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (!saved) return {};
+
+    try {
+        return JSON.parse(saved);
+    } catch {
+        return {};
+    }
+}
+
+let events = loadData();
+
+function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+}
+
+let currentDate = new Date();
+let selectedDate = null;
+let selectedDateKey = null;
+
+const monthNames = [
+"January","February","March","April","May","June",
+"July","August","September","October","November","December"
+];
+
+const dayNames = [
+"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
+];
+
+function toDateKey(year, month, day){
+    return `${year}-${month}-${day}`;
+}
+
+function formatTime(time24){
+
+    if(!time24) return "All day";
+
+    const [h,m] = time24.split(":");
+
+    const hour = Number(h);
+
+    const suffix = hour >= 12 ? "PM" : "AM";
+
+    const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+
+    return `${hour12}:${m} ${suffix}`;
+}
+
+function renderCalendar(){
+
+const year = currentDate.getFullYear();
+const month = currentDate.getMonth();
+
+const firstDay = new Date(year,month,1);
+const lastDay = new Date(year,month+1,0);
+const prevLastDay = new Date(year,month,0);
+
+const firstDayIndex = firstDay.getDay();
+const lastDayIndex = lastDay.getDay();
+const nextDays = 7-lastDayIndex-1;
+
+monthYearEl.textContent = `${monthNames[month]} ${year}`;
+
+let days = "";
+
+// previous month
+
+for(let x=firstDayIndex;x>0;x--){
+
+const prevDate = prevLastDay.getDate()-x+1;
+
+const prevMonth = month===0 ? 12 : month;
+const prevYear = month===0 ? year-1 : year;
+
+const key = toDateKey(prevYear,prevMonth,prevDate);
+
+days += `
+<div class="day other-month ${events[key] ? "has-events":""}">
+${prevDate}
+</div>
+`;
+}
+
+// current month
+
+for(let i=1;i<=lastDay.getDate();i++){
+
+const date = new Date(year,month,i);
+
+const key = toDateKey(year,month+1,i);
+
+let classes = "day";
+
+const today = new Date();
+
+if(
+today.getDate()==i &&
+today.getMonth()==month &&
+today.getFullYear()==year
+){
+classes+=" today";
+}
+
+if(
+selectedDate &&
+selectedDate.getDate()==i &&
+selectedDate.getMonth()==month &&
+selectedDate.getFullYear()==year
+){
+classes+=" selected";
+}
+
+if(events[key]){
+classes+=" has-events";
+}
+
+days += `
+<div class="${classes}" data-date="${key}">
+${i}
+</div>
+`;
+}
+// next month
+
+for(let j=1;j<=nextDays;j++){
+
+const nextMonth = month===11 ? 1 : month+2;
+const nextYear = month===11 ? year+1 : year;
+
+const key = toDateKey(nextYear,nextMonth,j);
+
+days += `
+<div class="day other-month ${events[key] ? "has-events":""}">
+${j}
+</div>
+`;
+}
+
+daysEl.innerHTML = days;
+
+document.querySelectorAll(".day:not(.other-month)").forEach(day=>{
+
+day.addEventListener("click",()=>{
+
+const dateStr = day.dataset.date;
+
+const [year,month,dayNum] = dateStr.split("-").map(Number);
+
+selectedDate = new Date(year,month-1,dayNum);
+selectedDateKey = dateStr;
+
+renderCalendar();
+showEvents(dateStr);
+updateAddEventHint();
+
+});
+
+});
+
+}
+
+function showEvents(dateStr){
+
+const [year,month,day] = dateStr.split("-").map(Number);
+
+const dateObj = new Date(year,month-1,day);
+
+eventDateEl.textContent =
+`${dayNames[dateObj.getDay()]}, ${monthNames[dateObj.getMonth()]} ${day}, ${year}`;
+
+eventListEl.innerHTML="";
+
+if(events[dateStr] && events[dateStr].length){
+
+events[dateStr].forEach(event=>{
+
+const div=document.createElement("div");
+
+div.className="event-item";
+
+div.innerHTML=`
+<div class="event-color"></div>
+<div class="event-time">${event.time}</div>
+<div class="event-text">${event.text}</div>
+`;
+
+eventListEl.appendChild(div);
+
+});
+
+}else{
+
+eventListEl.innerHTML=`
+<div class="no-events">
+No events scheduled for this day
+</div>
+`;
+
+}
+
+}
+
+function updateAddEventHint(){
+
+if(selectedDateKey){
+
+addEventHint.style.display="none";
+
+}else{
+
+addEventHint.style.display="block";
+addEventHint.textContent="Select a date on the calendar first.";
+
+}
+
+}
+
+addEventBtn.addEventListener("click",()=>{
+
+if(!selectedDateKey){
+updateAddEventHint();
+return;
+}
+
+const text = eventTextInput.value.trim();
+
+if(!text){
+eventTextInput.focus();
+return;
+}
+
+const time = formatTime(eventTimeInput.value);
+
+if(!events[selectedDateKey]){
+events[selectedDateKey]=[];
+}
+
+events[selectedDateKey].push({
+time,
+text
+});
+
+saveData();
+
+eventTimeInput.value="";
+eventTextInput.value="";
+
+renderCalendar();
+showEvents(selectedDateKey);
+
+});
+
+eventTextInput.addEventListener("keydown",e=>{
+
+if(e.key==="Enter"){
+addEventBtn.click();
+}
+
+});
+
+prevMonthBtn.addEventListener("click",()=>{
+
+currentDate.setMonth(currentDate.getMonth()-1);
+
+selectedDate=null;
+selectedDateKey=null;
+
+renderCalendar();
+
+updateAddEventHint();
+
+eventDateEl.textContent="Select a date";
+
+eventListEl.innerHTML=`
+<div class="no-events">
+Select a date with events to view them here
+</div>
+`;
+
+});
+
+nextMonthBtn.addEventListener("click",()=>{
+
+currentDate.setMonth(currentDate.getMonth()+1);
+
+selectedDate=null;
+selectedDateKey=null;
+
+renderCalendar();
+
+updateAddEventHint();
+
+eventDateEl.textContent="Select a date";
+
+eventListEl.innerHTML=`
+<div class="no-events">
+Select a date with events to view them here
+</div>
+`;
+
+});
+
+todayBtn.addEventListener("click",()=>{
+
+currentDate=new Date();
+selectedDate=new Date();
+
+renderCalendar();
+
+selectedDateKey = toDateKey(
+currentDate.getFullYear(),
+currentDate.getMonth()+1,
+currentDate.getDate()
+);
+
+showEvents(selectedDateKey);
+
+updateAddEventHint();
+
+});
+
+updateAddEventHint();
+renderCalendar();
+
+});
+</script>
+
+</body>
+</html>
